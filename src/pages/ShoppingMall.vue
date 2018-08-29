@@ -1,5 +1,6 @@
 <template>
     <div>
+
       <div class="search-bar">
         <van-row>
           <van-col span="3">
@@ -13,6 +14,7 @@
           </van-col>
         </van-row>
       </div>
+
       <div class="swipe-area">
         <van-swipe :autoplay="2000">
           <van-swipe-item v-for="(banner, index) in bannerPicArray" :key="index">
@@ -20,15 +22,18 @@
           </van-swipe-item>
         </van-swipe>
       </div>
+
       <div class="type-bar">
         <div v-for="(cate, index) in category" :key="index" >
           <img v-lazy="cate.image" width="90%" alt="分类图片">
           <span>{{cate.mallCategoryName}}</span>
         </div>
       </div>
+
       <div class="ad-banner">
         <img v-lazy="adBanner.PICTURE_ADDRESS" alt="广告图片" width="100%" >
       </div>
+
       <div class="recommend-area">
         <div class="recommend-title"></div>
         <div class="recommend-body">
@@ -43,6 +48,24 @@
           </swiper>
         </div>
       </div>
+
+      <floor-component :floor-data="floor1" :floor-title="floorName.floor1" />
+      <floor-component :floor-data="floor2" :floor-title="floorName.floor2" />
+      <floor-component :floor-data="floor3" :floor-title="floorName.floor3" />
+
+      <div class="hot-area">
+        <div class="hot-title">热卖商品</div>
+        <div class="hot-goods">
+          <van-list>
+              <van-row gutter="20">
+                <van-col span="12" v-for="(item,index) in hotGoods" :key="index" >
+                  <goods-info :goods-image="item.image" :goods-name="item.name" :goods-price="item.price" ></goods-info>
+                </van-col>
+              </van-row>
+          </van-list>
+        </div>
+      </div>
+
     </div>
 </template>
 
@@ -50,15 +73,25 @@
   import axios from 'axios'
   import 'swiper/dist/css/swiper.css'
   import { swiper, swiperSlide } from 'vue-awesome-swiper'
+  import floorComponent from '../components/floorComponent'
+  import goodsInfoComponent from '../components/goodsInfoComponent'
   export default {
     name: "ShoppingMall",
     data() {
       return {
-        locationIcon: require('../../assets/image/icon-location.png'),
+        locationIcon: require('../assets/image/icon-location.png'),
+        swiperOption: {
+          slidesPerView:3,
+        },
         bannerPicArray: [],
         category: [],
         adBanner: [],
-        recommendGoods: []
+        recommendGoods: [],
+        floor1: [],
+        floor2: [],
+        floor3: [],
+        floorName: {},
+        hotGoods: []
       }
     },
     created() {
@@ -73,6 +106,11 @@
             this.adBanner = response.data.data.advertesPicture
             this.bannerPicArray = response.data.data.slides
             this.recommendGoods = response.data.data.recommend
+            this.floor1 = response.data.data.floor1
+            this.floor2 = response.data.data.floor2
+            this.floor3 = response.data.data.floor3
+            this.floorName = response.data.data.floorName
+            this.hotGoods = response.data.data.hotGoods
           }
         })
         .catch(error => {
@@ -81,7 +119,9 @@
     },
     components: {
       swiper,
-      swiperSlide
+      swiperSlide,
+      'floor-component': floorComponent,
+      'goods-info': goodsInfoComponent
     }
   }
 </script>
